@@ -32,6 +32,8 @@ pip install -r requirements.txt
 
 # Install PyG dependencies
 pip install torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+
+
 pip install graphslim
 
 
