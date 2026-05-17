@@ -76,7 +76,7 @@ class SGDD(GCondBase):
                 loss_avg += loss.item()
 
                 if args.beta > 0:
-                    loss_reg = args.beta * regularization(adj_syn, (utils.tensor2onehot(labels_syn.to('cpu'))).to(adj_syn.device),args)
+                    loss_reg = args.beta * regularization(adj_syn, tensor2onehot(labels_syn.to('cpu')).to(adj_syn.device), args)
                 else:
                     loss_reg = torch.tensor(0)
 

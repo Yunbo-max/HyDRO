@@ -1,4 +1,3 @@
-from IPython.display import display, clear_output
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -13,11 +12,11 @@ import math
 import warnings
 from itertools import product
 from scipy.stats import wasserstein_distance
-from torch_geometric.utils import (
-    to_networkx, 
-    from_scipy_sparse_matrix,
-    degree
-)
+from torch_geometric.utils import to_networkx, degree
+try:
+    from torch_geometric.utils import from_scipy_sparse_matrix
+except ImportError:
+    from torch_geometric.utils import from_scipy_sparse_array as from_scipy_sparse_matrix
 from numpy.linalg import norm
 from scipy.sparse import coo_matrix
 
@@ -146,72 +145,6 @@ class HyperbolicNet(nn.Module):
             if isinstance(m, MobiusLinear) or isinstance(m, nn.BatchNorm1d):
                 m.reset_parameters()
         self.apply(weight_reset)
-
-
-
-class MobiusLinear(torch.nn.Linear):
-    """Hyperbolic linear layer operating in the Poincaré ball.
-    
-    This layer performs the equivalent of a linear transformation in hyperbolic space
-    using the Möbius gyrovector space operations.
-    """
-    
-    def __init__(self, *args, nonlin=None, ball=None, curvature=0.01, **kwargs):
-        """Initialize the hyperbolic linear layer.
-        
-        Args:
-            *args: Standard Linear layer arguments (input_dim, output_dim)
-            nonlin: Nonlinearity to apply (None for linear)
-            ball: Existing Poincaré ball manifold (optional)
-            curvature: Curvature of the Poincaré ball (if ball not provided)
-            **kwargs: Additional arguments for torch.nn.Linear
-        """
-        super().__init__(*args, **kwargs)
-        
-        # Initialize the hyperbolic manifold
-        self.ball = self._create_poincare_ball(ball, curvature)
-        
-        # Convert bias to manifold parameter if exists
-        if self.bias is not None:
-            self.bias = geoopt.ManifoldParameter(
-                self.bias, 
-                manifold=self.ball
-            )
-            
-        self.nonlin = nonlin  # Optional nonlinearity
-        self.reset_parameters()  # Initialize weights
-        
-    def _create_poincare_ball(self, existing_ball, curvature):
-        """Create or validate the Poincaré ball manifold."""
-        if existing_ball is None:
-            assert curvature is not None, "Curvature must be specified if no ball provided"
-            return geoopt.PoincareBall(c=curvature)
-        return existing_ball
-    
-    def forward(self, input):
-        """Forward pass with hyperbolic operations.
-        
-        Args:
-            input: Input tensor in hyperbolic space
-            
-        Returns:
-            Output tensor after hyperbolic linear transformation
-        """
-        return mobius_linear(
-            input,
-            weight=self.weight,
-            bias=self.bias,
-            nonlin=self.nonlin,
-            ball=self.ball,
-        )
-    
-    @torch.no_grad()
-    def reset_parameters(self):
-        """Initialize weights with small random perturbations from identity."""
-        torch.nn.init.eye_(self.weight)
-        self.weight.add_(torch.rand_like(self.weight).mul_(1e-3))
-        if self.bias is not None:
-            self.bias.zero_()
 
 
 

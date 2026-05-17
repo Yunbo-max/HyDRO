@@ -1,3 +1,4 @@
+#!/bin/bash
 for r in 0.001 0.005 0.01
 do
     bash scripts/script_cross.sh flickr ${r} 0  

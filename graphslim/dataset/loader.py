@@ -421,7 +421,8 @@ class SCN(InMemoryDataset):
         data_list = []
         
         # Load the dataframe
-        df = pd.read_csv('C:\Users\Scail.WINDOWS-4FTU4OO\Desktop\IJCAI\GraphSlim\data\Final_markline.csv')
+        data_path = osp.join(osp.dirname(osp.abspath(__file__)), '..', '..', 'data', 'Final_markline.csv')
+        df = pd.read_csv(data_path)
 
         # Step 1: Train Word2Vec model on company names and suppliers (tokenize by space)
         model = gensim.models.Word2Vec(

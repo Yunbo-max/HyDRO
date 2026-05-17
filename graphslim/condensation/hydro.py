@@ -40,14 +40,13 @@ class HyDRO(GCondBase):
         super(HyDRO, self).__init__(setting, data, args, **kwargs)
         self.data = data
         self.args = args
-        self.device = device
         print('feat_train',data.feat_train.shape)
         self.data.labels_syn = self.generate_labels_syn(data)
         n = self.data.labels_syn.shape[0]
         d = data.feat_train.shape[1]
 
 
-        self.hyp = HyperbolicNet(nfeat=d, nnodes=n, device=device,args=args).to(self.device)
+        self.hyp = HyperbolicNet(nfeat=d, nnodes=n, device=self.device,args=args).to(self.device)
         self.optimizer_feat = torch.optim.Adam([self.feat_syn], lr=args.lr_feat)
         self.optimizer_pge = geoopt.optim.RiemannianSGD(list(self.hyp.parameters()), lr=args.lr_adj, momentum=args.momentum,weight_decay=args.weight_decay_hyper)
         
@@ -105,7 +104,7 @@ class HyDRO(GCondBase):
                 loss_avg += loss.item()
 
                 if args.beta > 0:
-                    loss_reg = args.beta * regularization(adj_syn, (utils.tensor2onehot(labels_syn.to('cpu'))).to(adj_syn.device),args)
+                    loss_reg = args.beta * regularization(adj_syn, tensor2onehot(labels_syn.to('cpu')).to(adj_syn.device), args)
                 else:
                     loss_reg = torch.tensor(0)
 

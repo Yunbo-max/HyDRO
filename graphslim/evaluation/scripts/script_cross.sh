@@ -1,3 +1,4 @@
+#!/bin/bash
 dataset=${1}
 r=${2}
 gpu_id=${3}

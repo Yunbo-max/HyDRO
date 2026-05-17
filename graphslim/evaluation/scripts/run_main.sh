@@ -1,3 +1,4 @@
+#!/bin/bash
 for r in 0.25 0.5 1
 do
 python train_gcond_transduct.py --dataset cora --nlayers=2 --sgc=1 --lr_feat=1e-4 --gpu_id=0  --lr_adj=1e-4 --r=${r}  --seed=1 --epoch=600 --save=0

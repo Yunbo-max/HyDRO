@@ -1,5 +1,6 @@
 click==8.1.7
 deeprobust==0.2.11
+geoopt>=0.5.0
 matplotlib==3.5.2
 networkx==2.8
 networkit==11.0

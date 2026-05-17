@@ -14,7 +14,7 @@ from graphslim.coarsening import *
 
 if __name__ == '__main__':
     args = cli(standalone_mode=False)
-    graph = get_dataset(args.dataset, args)
+    graph = get_dataset(args.dataset, args, args.load_path)
     if args.attack is not None:
         if args.setting == 'ind':
             data = attack(graph, args)
